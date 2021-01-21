@@ -1,0 +1,57 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Register User</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" novalidate>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-item lines="full">
+            <ion-label position="floating">Email</ion-label>
+            <ion-input formControlName="email" type="text"></ion-input>
+          </ion-item>
+          <span class="error ion-padding" *ngIf="submitted && errorCtr.email.errors?.required">
+            Email is required.
+          </span>
+          <span class="error ion-padding" *ngIf="submitted && errorCtr.email.errors?.pattern">
+            Enter valid email.
+          </span>
+
+          <ion-item lines="full">
+            <ion-label position="floating">Password</ion-label>
+            <ion-input formControlName="password" type="password"></ion-input>
+          </ion-item>
+          <span class="error ion-padding" *ngIf="submitted && errorCtr.password.errors?.required">
+            Password is required.
+          </span>
+          <span class="error ion-padding" *ngIf="submitted && errorCtr.password.errors?.pattern">
+            Enter valid password.
+          </span>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col>
+        </ion-col>
+        <ion-col>
+          <ion-button type="submit" expand="block">Register</ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button type="submit" (click)="goToLogin()" expand="block">login
+            <ion-icon name="log-in" slot="start"></ion-icon>
+          </ion-button>
+        </ion-col>
+        <ion-col [style.display]="isVisible ? 'block' : 'none'">
+          <ion-button type="submit" (click)="authService.SendVerificationMail(newUser)" expand="block">
+            Resend Verification Email
+          </ion-button>
+        </ion-col>
+        <ion-col>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>

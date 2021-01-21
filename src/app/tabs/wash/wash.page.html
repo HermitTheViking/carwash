@@ -1,0 +1,24 @@
+<app-menu></app-menu>
+
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Wash</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-row>
+    <ion-col>
+      <ion-button type="submit" color="success" expand="block" (click)="startNewWash(0, true)">Start now</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button type="submit" color="secondary" expand="block">Start in 1 min</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button type="submit" color="danger" expand="block" (click)="updateWash(true, true)">Abort</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-content>

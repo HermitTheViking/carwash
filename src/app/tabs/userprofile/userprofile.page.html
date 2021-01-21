@@ -1,0 +1,15 @@
+<app-menu></app-menu>
+
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <p>Hello, {{currentUser}}</p>
+  <ion-button type="submit" (click)="authService.SignOut()" expand="block">Logout</ion-button>
+</ion-content>
