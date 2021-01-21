@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import firebase from 'firebase';
 
-import { AuthenticationService } from '../../shared/authentication.service';
+import { AuthenticationService } from '../../shared/services/authentication.service';
 
 @Component({
   selector: 'app-registration',
@@ -14,7 +14,6 @@ export class RegistrationPage implements OnInit {
 
   registrationForm: FormGroup;
   submitted = false;
-  isVisible = false;
   newUser: firebase.auth.UserCredential;
 
   constructor(

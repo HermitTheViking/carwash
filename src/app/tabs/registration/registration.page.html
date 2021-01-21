@@ -44,7 +44,7 @@
             <ion-icon name="log-in" slot="start"></ion-icon>
           </ion-button>
         </ion-col>
-        <ion-col [style.display]="isVisible ? 'block' : 'none'">
+        <ion-col>
           <ion-button type="submit" (click)="authService.SendVerificationMail(newUser)" expand="block">
             Resend Verification Email
           </ion-button>

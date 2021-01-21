@@ -10,15 +10,34 @@
 </ion-header>
 
 <ion-content>
-  <ion-row>
-    <ion-col>
-      <ion-button type="submit" color="success" expand="block" (click)="startNewWash(0, true)">Start now</ion-button>
-    </ion-col>
-    <ion-col>
-      <ion-button type="submit" color="secondary" expand="block">Start in 1 min</ion-button>
-    </ion-col>
-    <ion-col>
-      <ion-button type="submit" color="danger" expand="block" (click)="updateWash(true, true)">Abort</ion-button>
-    </ion-col>
-  </ion-row>
+  <form [formGroup]="startWashForm" (ngSubmit)="onSubmit()" novalidate>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-item lines="full">
+            <ion-label position="floating">Type</ion-label>
+            <ion-input formControlName="type" type="text"></ion-input>
+          </ion-item>
+          <span class="error ion-padding" *ngIf="submitted && errorCtr.type.errors?.required">
+            Type is required.
+          </span>
+          <span class="error ion-padding" *ngIf="submitted && errorCtr.type.errors?.pattern">
+            Enter valid type.
+          </span>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col>
+          <ion-button type="submit" color="success" expand="block">Queue wash</ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button type="submit" color="secondary" expand="block" (click)="updateWash(true, false)">Start wash</ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button type="submit" color="danger" expand="block" (click)="updateWash(true, true)">Abort wash</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
 </ion-content>

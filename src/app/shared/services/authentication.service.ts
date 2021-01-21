@@ -4,14 +4,15 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import firebase from 'firebase';
 
-import { User } from './user';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { CurrentUser } from '../models/currentuser';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthenticationService {
 
-    userData: any;
+    user$: BehaviorSubject<CurrentUser> = new BehaviorSubject<CurrentUser>(new CurrentUser());
 
     constructor(
         public afStore: AngularFirestore,
@@ -21,9 +22,12 @@ export class AuthenticationService {
     ) {
         this.afAuth.authState.subscribe(user => {
             if (user) {
-                this.userData = user;
-                localStorage.setItem('user', JSON.stringify(this.userData));
+                localStorage.setItem('user', JSON.stringify(user));
                 JSON.parse(localStorage.getItem('user'));
+                const theUser = new CurrentUser();
+                theUser.displayName = user.displayName;
+                theUser.email = user.email;
+                this.user$.next(theUser);
             } else {
                 localStorage.setItem('user', null);
                 JSON.parse(localStorage.getItem('user'));
@@ -68,37 +72,30 @@ export class AuthenticationService {
         return (user.emailVerified !== false) ? true : false;
     }
 
-    // Auth providers
-    async AuthLogin(provider: firebase.auth.AuthProvider): Promise<void> {
-        try {
-            const result = await this.afAuth.signInWithPopup(provider);
-            this.ngZone.run(() => {
-                this.router.navigate(['/profile']);
-            });
-            this.SetUserData(result.user);
-        } catch (error) {
-            window.alert(error);
-        }
+    // Sign-out
+    async SignOut(): Promise<void> {
+        localStorage.removeItem('user');
+        await this.afAuth.signOut();
+        this.router.navigate(['/login']);
     }
 
     // Store user in localStorage
     SetUserData(user: firebase.User): Promise<void> {
         const userRef: AngularFirestoreDocument<any> = this.afStore.doc(`users/${user.uid}`);
-        const userData: User = {
-            uid: user.uid,
+        const userData: CurrentUser = {
             email: user.email,
-            displayName: user.displayName,
-            emailVerified: user.emailVerified
+            displayName: user.displayName
         };
         return userRef.set(userData, {
             merge: true
         });
     }
 
-    // Sign-out
-    async SignOut(): Promise<void> {
-        await this.afAuth.signOut();
-        localStorage.removeItem('user');
-        this.router.navigate(['/login']);
+    getUserobservable(): Observable<CurrentUser> {
+        return this.user$.asObservable();
+    }
+
+    getToken(): string {
+        return JSON.parse(localStorage.getItem('user'))['stsTokenManager']['accessToken'];
     }
 }

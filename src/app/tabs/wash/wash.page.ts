@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MenuController } from '@ionic/angular';
-import { AuthenticationService } from '../../shared/authentication.service';
+import { Subscription } from 'rxjs';
+
+import { AuthenticationService } from '../../shared/services/authentication.service';
 import { RestService } from '../../shared/rest.service';
-import { Wash } from '../../shared/wash';
+import { Wash } from '../../shared/models/wash';
+import { CurrentUser } from '../../shared/models/currentuser';
 
 @Component({
   selector: 'app-wash',
@@ -14,26 +18,34 @@ export class WashPage implements OnInit {
 
   washes: Wash[];
   wash: Wash;
-  userEmail: string;
+
+  startWashForm: FormGroup;
+  submitted = false;
+  currentUser: CurrentUser = new CurrentUser();
+  $authSubscription: Subscription;
 
   constructor(
     private authService: AuthenticationService,
     private restService: RestService,
+    public formBuilder: FormBuilder,
     private menu: MenuController,
     private router: Router
-    ) {}
+    ) {
+      this.$authSubscription = this.authService.user$.subscribe(u => {
+        this.currentUser = u;
+      });
+    }
 
   ngOnInit() {
     if (!this.authService.isLoggedIn) {
       this.router.navigate(['/login']);
     }
-    this.getUserData();
-    this.getAllWashes();
-  }
 
-  getUserData() {
-    const userJson = JSON.parse(localStorage.getItem('user'));
-    this.userEmail = userJson.email;
+    this.startWashForm = this.formBuilder.group(
+      {
+        type: ['', Validators.required]
+      }
+    );
   }
 
   openMenu() {
@@ -41,17 +53,31 @@ export class WashPage implements OnInit {
     this.menu.open('menu');
   }
 
+  get errorCtr() {
+    return this.startWashForm.controls;
+  }
+
+  onSubmit() {
+    this.submitted = true;
+    if (!this.startWashForm.valid) {
+      console.log('All fields are required.');
+      return false;
+    } else {
+      this.startNewWash(this.startWashForm.value['type']);
+    }
+  }
+
   getAllWashes() {
     this.restService.getAllWashes()
     .then(
-      (res: any) => {
-        this.washes = res.map(
-          (res: any) => {
+      (res1: any) => {
+        this.washes = res1.map(
+          (res2: any) => {
             const tmp: Wash = {
-              id: res.id,
-              type: res.type,
-              duration: res.duration,
-              done: res.done
+              id: res2.id,
+              type: res2.type,
+              duration: res2.duration,
+              done: res2.done
             };
             return tmp;
           }
@@ -60,17 +86,16 @@ export class WashPage implements OnInit {
     );
   }
 
-  startNewWash(washType: number, start: boolean) {
+  startNewWash(washType: number) {
     this.restService.createWash({
-      email: this.userEmail,
-      type: washType,
-      startNow: start
+      email: this.currentUser.email,
+      type: washType
     });
   }
 
   updateWash(startNow: boolean, abort: boolean) {
     this.restService.updateWash({
-      email: this.userEmail,
+      email: this.currentUser.email,
       startNow,
       abort
     });

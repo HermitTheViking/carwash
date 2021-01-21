@@ -5,7 +5,7 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS  } from '@angular/common/http';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -13,8 +13,8 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AuthenticationService } from './shared/authentication.service';
-import { RestService } from './shared/rest.service';
+import { AuthInterceptor } from './shared/security/auth-interceptor';
+import { AuthGuardGuard } from './shared/security/auth-guard.guard';
 
 import { environment } from '../environments/environment';
 
@@ -40,11 +40,10 @@ import { environment } from '../environments/environment';
     SplashScreen,
 
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    AuthGuardGuard,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
 
-    AngularFirestoreModule,
-
-    AuthenticationService,
-    RestService
+    AngularFirestoreModule
   ],
   bootstrap: [AppComponent]
 })

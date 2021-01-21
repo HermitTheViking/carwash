@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
-import { AuthenticationService } from '../../shared/authentication.service';
+import { AuthenticationService } from '../../shared/services/authentication.service';
+import { CurrentUser } from '../../shared/models/currentuser';
 
 @Component({
   selector: 'app-login',
@@ -13,12 +15,18 @@ export class LoginPage implements OnInit {
 
   loginForm: FormGroup;
   submitted = false;
+  currentUser: CurrentUser = new CurrentUser();
+  $authSubscription: Subscription;
 
   constructor(
-    public formBuilder: FormBuilder,
     private authService: AuthenticationService,
+    public formBuilder: FormBuilder,
     private router: Router
-  ) {}
+  ) {
+    this.$authSubscription = this.authService.user$.subscribe(u => {
+      this.currentUser = u;
+    });
+  }
 
   ngOnInit() {
     if (this.authService.isLoggedIn) {
@@ -43,7 +51,7 @@ export class LoginPage implements OnInit {
       console.log('All fields are required.');
       return false;
     } else {
-      this.logIn(this.loginForm.value['email'], this.loginForm.value['password'])
+      this.logIn(this.loginForm.value['email'], this.loginForm.value['password']);
     }
   }
 

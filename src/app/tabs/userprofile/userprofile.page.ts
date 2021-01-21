@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
-import { User } from 'src/app/shared/user';
-import { AuthenticationService } from '../../shared/authentication.service';
+import { Subscription } from 'rxjs';
+
+import { AuthenticationService } from '../../shared/services/authentication.service';
+import { CurrentUser } from '../../shared/models/currentuser';
 
 @Component({
   selector: 'app-profile',
@@ -11,13 +13,18 @@ import { AuthenticationService } from '../../shared/authentication.service';
 })
 export class ProfilePage implements OnInit {
 
-  currentUser: string;
+  currentUser: CurrentUser = new CurrentUser();
+  $authSubscription: Subscription;
 
   constructor(
     public authService: AuthenticationService,
     private menu: MenuController,
     private router: Router
-  ) { }
+  ) {
+    this.$authSubscription = this.authService.user$.subscribe(u => {
+      this.currentUser = u;
+    });
+  }
 
   ngOnInit() {
     if (!this.authService.isLoggedIn) {
@@ -27,12 +34,6 @@ export class ProfilePage implements OnInit {
       window.alert('Email is not verified');
       this.router.navigate(['/register']);
     }
-    this.getUserData();
-  }
-
-  getUserData() {
-    const userJson = JSON.parse(localStorage.getItem('user'));
-    this.currentUser = userJson['email'];
   }
 
   openMenu() {

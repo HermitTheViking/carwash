@@ -4,15 +4,15 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
-import { Wash, NewWash, UpdateWash } from './wash';
-import { User } from './user';
+import { Wash, NewWash, UpdateWash } from './models/wash';
+import { UserFromDb } from './models/user';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RestService {
 
-  restUrl = 'https://localhost:5001/api/';
+  restUrl = 'https://carwash-api.hermittheviking.dk/api/';
 
   httpHeader = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -22,35 +22,35 @@ export class RestService {
     private http: HttpClient
     ) { }
 
-  public getAllUsers(): Promise<User[]> {
-    return this.http.get<User[]>(`${this.restUrl}users`)
+  public getAllUsers(): Promise<UserFromDb[]> {
+    return this.http.get<UserFromDb[]>(`${this.restUrl}users`)
       .pipe(
-        tap(() => console.log('User fetched!')),
-        catchError(this.handleError<User[]>('Get user', []))
+        tap(() => console.log('UserFromDb fetched!')),
+        catchError(this.handleError<UserFromDb[]>('Get user', []))
       ).toPromise();
   }
 
-  public getUserByEmail(email: string): Promise<User> {
-    return this.http.get<User>(`${this.restUrl}users/${encodeURIComponent(email)}`)
+  public getUserByEmail(email: string): Promise<UserFromDb> {
+    return this.http.get<UserFromDb>(`${this.restUrl}users/${encodeURIComponent(email)}`)
       .pipe(
-        tap(_ => console.log(`User fetched: ${email}`)),
-        catchError(this.handleError<User>(`Get user id=${email}`))
+        tap(_ => console.log(`UserFromDb fetched: ${email}`)),
+        catchError(this.handleError<UserFromDb>(`Get user id=${email}`))
       ).toPromise();
   }
 
-  public updateUser(email: string, model: User): Promise<any> {
-    return this.http.put<User>(`${this.restUrl}users/${encodeURIComponent(email)}`, model, this.httpHeader)
+  public updateUser(email: string, model: UserFromDb): Promise<any> {
+    return this.http.put<UserFromDb>(`${this.restUrl}users/${encodeURIComponent(email)}`, model, this.httpHeader)
       .pipe(
-        tap(_ => console.log(`User updated: ${email}`)),
-        catchError(this.handleError<User[]>('Update user'))
+        tap(_ => console.log(`UserFromDb updated: ${email}`)),
+        catchError(this.handleError<UserFromDb[]>('Update user'))
       ).toPromise();
   }
 
-  public deleteUserByEmail(email: string): Promise<User[]> {
-    return this.http.delete<User[]>(`${this.restUrl}users/${encodeURIComponent(email)}`, this.httpHeader)
+  public deleteUserByEmail(email: string): Promise<UserFromDb[]> {
+    return this.http.delete<UserFromDb[]>(`${this.restUrl}users/${encodeURIComponent(email)}`, this.httpHeader)
       .pipe(
-        tap(_ => console.log(`User deleted: ${email}`)),
-        catchError(this.handleError<User[]>('Delete user'))
+        tap(_ => console.log(`UserFromDb deleted: ${email}`)),
+        catchError(this.handleError<UserFromDb[]>('Delete user'))
       ).toPromise();
   }
 
@@ -74,7 +74,7 @@ export class RestService {
     return this.http.put<UpdateWash>(`${this.restUrl}washes`, model, this.httpHeader)
       .pipe(
         tap(_ => console.log('Wash updated')),
-        catchError(this.handleError<User[]>('Update wash'))
+        catchError(this.handleError<UpdateWash>('Update wash'))
       ).toPromise();
   }
 

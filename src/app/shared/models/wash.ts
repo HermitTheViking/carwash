@@ -8,7 +8,6 @@ export interface Wash {
 export interface NewWash {
     email: string;
     type: number;
-    startNow: boolean;
 }
 
 export interface UpdateWash {
