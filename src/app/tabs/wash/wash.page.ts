@@ -93,7 +93,15 @@ export class WashPage implements OnInit {
     });
   }
 
-  updateWash(startNow: boolean, abort: boolean) {
+  updateWashStart(startNow: boolean, abort: boolean) {
+    this.restService.updateWash({
+      email: this.currentUser.email,
+      startNow,
+      abort
+    });
+  }
+
+  updateWashAbort(startNow: boolean, abort: boolean) {
     this.restService.updateWash({
       email: this.currentUser.email,
       startNow,

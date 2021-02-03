@@ -14,8 +14,11 @@ export class RestService {
 
   restUrl = 'https://carwash-api.hermittheviking.dk/api/';
 
-  httpHeader = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type':  'application/xml',
+      'Access-Control-Allow-Origin': '*'
+    })
   };
 
   constructor(
@@ -39,7 +42,7 @@ export class RestService {
   }
 
   public updateUser(email: string, model: UserFromDb): Promise<any> {
-    return this.http.put<UserFromDb>(`${this.restUrl}users/${encodeURIComponent(email)}`, model, this.httpHeader)
+    return this.http.put<UserFromDb>(`${this.restUrl}users/${encodeURIComponent(email)}`, model, this.httpOptions)
       .pipe(
         tap(_ => console.log(`UserFromDb updated: ${email}`)),
         catchError(this.handleError<UserFromDb[]>('Update user'))
@@ -47,7 +50,7 @@ export class RestService {
   }
 
   public deleteUserByEmail(email: string): Promise<UserFromDb[]> {
-    return this.http.delete<UserFromDb[]>(`${this.restUrl}users/${encodeURIComponent(email)}`, this.httpHeader)
+    return this.http.delete<UserFromDb[]>(`${this.restUrl}users/${encodeURIComponent(email)}`, this.httpOptions)
       .pipe(
         tap(_ => console.log(`UserFromDb deleted: ${email}`)),
         catchError(this.handleError<UserFromDb[]>('Delete user'))
@@ -63,7 +66,7 @@ export class RestService {
   }
 
   public createWash(model: NewWash): Promise<any> {
-    return this.http.post<NewWash>(`${this.restUrl}washes`, model, this.httpHeader)
+    return this.http.post<NewWash>(`${this.restUrl}washes`, model, this.httpOptions)
       .pipe(
         tap(() => console.log('Wash created!')),
         catchError(this.handleError<NewWash>('Create wash'))
@@ -71,7 +74,7 @@ export class RestService {
   }
 
   public updateWash(model: UpdateWash): Promise<any> {
-    return this.http.put<UpdateWash>(`${this.restUrl}washes`, model, this.httpHeader)
+    return this.http.put<UpdateWash>(`${this.restUrl}washes`, model, this.httpOptions)
       .pipe(
         tap(_ => console.log('Wash updated')),
         catchError(this.handleError<UpdateWash>('Update wash'))
