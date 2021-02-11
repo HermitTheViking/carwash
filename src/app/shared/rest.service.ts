@@ -23,7 +23,7 @@ export class RestService {
 
   constructor(
     private http: HttpClient
-    ) { }
+    ) {}
 
   public getAllUsers(): Promise<UserFromDb[]> {
     return this.http.get<UserFromDb[]>(`${this.restUrl}users`)

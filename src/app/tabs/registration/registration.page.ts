@@ -20,7 +20,7 @@ export class RegistrationPage implements OnInit {
     public formBuilder: FormBuilder,
     public authService: AuthenticationService,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit(){
     if (this.authService.isLoggedIn) {

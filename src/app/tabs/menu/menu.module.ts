@@ -11,4 +11,4 @@ import { MenuComponent } from './menu.component';
     declarations: [MenuComponent],
     exports: [MenuComponent]
 })
-export class MenuComponentModule { }
+export class MenuComponentModule {}
